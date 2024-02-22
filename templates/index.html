@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Consulta de Estudiantes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mt-3 mb-5">
+            <h1>Consulta de Estudiantes</h1>
+        </header>
+
+        <main>
+            <form id="studentForm" class="form-inline mb-3">
+                <label for="studentId" class="mr-2">ID del Estudiante:</label>
+                <input type="text" id="studentId" name="studentId" class="form-control mr-2" required>
+                <button type="button" onclick="getStudentInfo()" class="btn btn-primary">Consultar</button>
+            </form>
+
+            <div id="result"></div>
+        </main>
+    </div>
+
+    <footer class="bg-dark text-light text-center py-2 fixed-bottom">
+        <p>&copy; 2024 Consulta de Estudiantes</p>
+    </footer>
+
+    <script>
+        function getStudentInfo() {
+            var studentId = $('#studentId').val();
+            console.log("ID del estudiante:", studentId);
+
+            $.ajax({
+                type: 'POST',
+                url: '/get_info',
+                data: { studentId: studentId },
+                success: function(response) {
+                    if (response.success) {
+                        var studentData = response.data;
+                        var resultHtml = '<div class="card">';
+                        resultHtml += '<div class="card-header"><h2 class="card-title">Información del Estudiante</h2></div>';
+                        resultHtml += '<div class="card-body">';
+                        resultHtml += '<p class="card-text"><strong>ID:</strong> ' + studentData[0] + '</p>';
+                        resultHtml += '<p class="card-text"><strong>Nombre:</strong> ' + studentData[1] + ' ' + studentData[2] + '</p>';
+                        resultHtml += '<p class="card-text"><strong>Apellido:</strong> ' + studentData[3] + ' ' + studentData[4] + '</p>';
+                        // Agrega más campos según sea necesario
+                        resultHtml += '</div></div>';
+
+                        $('#result').html(resultHtml);
+                    } else {
+                        $('#result').html('<div class="alert alert-danger" role="alert">' + response.message + '</div>');
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
